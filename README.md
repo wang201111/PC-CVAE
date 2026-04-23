@@ -2,6 +2,7 @@
 
 [![Python 3.9](https://img.shields.io/badge/Python-3.9-blue.svg)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-1.9.0-orange.svg)](https://pytorch.org/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19716264.svg)](https://doi.org/10.5281/zenodo.19716264)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 This repository contains the official implementation of **PC-CVAE**, a physics-constrained generative framework for reliable wide-range extrapolation of macroscopic thermophysical properties in multicomponent systems from limited low-temperature, ambient-pressure experimental data.
@@ -77,7 +78,7 @@ PC-CVAE/
 **Step 1.** Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/PC-CVAE.git
+git clone https://github.com/wang201111/PC-CVAE.git
 cd PC-CVAE
 ```
 
@@ -281,6 +282,19 @@ If you use this code in your research, please cite:
   journal = {Journal Name},
   year    = {2025},
   doi     = {10.xxxx/xxxxxx}
+}
+```
+
+If you use the code directly, please also cite the software:
+
+```bibtex
+@software{wang201111_pccvae_2026,
+  author  = {Wang, Your Given Name},
+  title   = {PC-CVAE},
+  version = {1.0.0},
+  year    = {2026},
+  doi     = {10.5281/zenodo.19716264},
+  url     = {https://doi.org/10.5281/zenodo.19716264}
 }
 ```
 
