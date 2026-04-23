@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "PC-CVAE: Physics-Constrained Conditional Variational Autoencoder for Wide-Range Extrapolation of Macroscopic Properties in Multicomponent Systems"
+version: "1.0.0"
+date-released: "2025-01-01"
+url: "https://github.com/your-username/PC-CVAE"
+repository-code: "https://github.com/your-username/PC-CVAE"
+license: MIT
+authors:
+  - family-names: "Your Family Name"
+    given-names: "Your Given Name"
+    affiliation: "Your Institution"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+
+preferred-citation:
+  type: article
+  title: "Physics-Constrained Conditional Variational Autoencoder for Wide-Range Extrapolation of Macroscopic Properties in Multicomponent Systems"
+  authors:
+    - family-names: "Your Family Name"
+      given-names: "Your Given Name"
+      affiliation: "Your Institution"
+      orcid: "https://orcid.org/0000-0000-0000-0000"
+  journal: "Journal Name"
+  year: 2025
+  doi: "10.xxxx/xxxxxx"
+  url: "https://doi.org/10.xxxx/xxxxxx"
+
+keywords:
+  - physics-constrained machine learning
+  - conditional variational autoencoder
+  - thermodynamic manifold
+  - multicomponent systems
+  - wide-range extrapolation
+  - solubility prediction
+  - viscosity prediction
+  - Gibbs phase rule
+  - chemical engineering thermodynamics
