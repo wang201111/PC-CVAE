@@ -1,28 +1,31 @@
-# PC-CVAE: Physics-Constrained Conditional Variational Autoencoder for Wide-Range Extrapolation of Macroscopic Properties in Multicomponent Systems
+# PC-CVAE: Physics-Constrained Conditional Variational Autoencoder for Wide-Range Extrapolation of Thermophysical Properties in Multicomponent Systems
 
-[![Python 3.9](https://img.shields.io/badge/Python-3.9-blue.svg)](https://www.python.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-1.9.0-orange.svg)](https://pytorch.org/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19716264.svg)](https://doi.org/10.5281/zenodo.19716264)
+[![Python 3.10](https://img.shields.io/badge/Python-3.10-blue.svg)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.3.1-orange.svg)](https://pytorch.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![DOI](https://img.shields.io/badge/Zenodo-10.5281%2Fzenodo.19716264-blue.svg)](https://doi.org/10.5281/zenodo.19716264)
 
-This repository contains the official implementation of **PC-CVAE**, a physics-constrained generative framework for reliable wide-range extrapolation of macroscopic thermophysical properties in multicomponent systems from limited low-temperature, ambient-pressure experimental data.
+Official implementation of **PC-CVAE**, a physics-constrained generative framework for reliable wide-range extrapolation of macroscopic thermophysical properties in multicomponent systems from limited, easily accessible experimental data.
 
 ---
 
 ## Overview
 
-Reliable wide-range extrapolation of macroscopic properties such as solubility and dynamic viscosity in multicomponent systems from limited experimental data remains a critical challenge in chemical engineering. PC-CVAE addresses this by embedding three fundamental thermodynamic laws directly into the architectural design and training objectives of a Conditional Variational Autoencoder (CVAE):
+The macroscopic properties of multicomponent systems are deterministic, continuous functions of state and composition that lie on a thermodynamic manifold of fixed dimensionality. Instead of fitting property values point by point, PC-CVAE reconstructs this global manifold and embeds three physical priors directly into the architecture and training objective of a Conditional Variational Autoencoder (CVAE):
 
-1. **Phase rule-driven latent space dimensionality** — The Gibbs phase rule directly sets `dim(z) = F − n_cond`, ensuring manifold reconstruction in a space consistent with the intrinsic degrees of freedom of the system.
-2. **Boundary collocation constraint** — A collocation loss anchors the learned manifold boundaries to frozen binary subsystem models, suppressing manifold drift in data-scarce regions.
-3. **Inverse Manifold Mapping structure with cycle consistency** — A deterministic mapping φ from operating conditions to latent space coordinates eliminates prediction variance from random sampling and enables stable predictions beyond the training set.
+1. **Phase rule-driven latent dimensionality.** The Gibbs phase rule provides a physics-informed prior for the intrinsic dimensionality of the manifold, which is used to set the latent dimensionality `dim(z) = F - n_cond`, replacing empirical hyperparameter search.
+2. **Boundary collocation constraint.** A collocation loss anchors the boundaries of the reconstructed manifold to frozen low-dimensional (binary) subsystem models, fixing the manifold geometry where experimental data are absent.
+3. **Inverse manifold mapping with cycle consistency.** A deterministic mapping from operating conditions to latent coordinates, supervised by a cycle-consistency loss over the full domain, removes the prediction variance of random sampling and yields a unique, physically consistent state for any condition.
 
-The framework requires no explicit governing equations and is validated on two systems:
+The framework requires no property-specific governing equation. It is validated on three systems governed by fundamentally different thermodynamic mechanisms:
 
-- **Na₂SO₄–MgSO₄–H₂O ternary aqueous salt system** (solid–liquid solubility, SLE)
-- **MCH–cis-Decalin–HMN ternary organic system** (liquid-phase dynamic viscosity)
+| System | Property | Mechanism |
+|---|---|---|
+| Na₂SO₄–MgSO₄–H₂O (ternary aqueous salt) | Solid–liquid solubility | Phase equilibrium |
+| MCH–cis-Decalin–HMN (ternary organic) | Liquid-phase dynamic viscosity | Momentum transport |
+| NaCl–CaCl₂–H₂O (ternary aqueous salt) | Thermal conductivity | Energy transport |
 
-PC-CVAE achieves R² of **0.892** and **0.946** in the far-range extrapolation domain, reducing RMSE by **56%** and **51%** relative to classical semi-empirical mechanistic models.
+Across all three, PC-CVAE holds far-range extrapolation accuracy close to the in-domain level, with far-range **R² of 0.892, 0.981, and 0.851**. RMSE is reduced by **60%** (vs. the Pitzer model, solubility) and **70%** (vs. the Eyring-NRTL model, viscosity), and by more than **90%** relative to a purely data-driven baseline for thermal conductivity over a **200 °C** extrapolation span.
 
 ---
 
@@ -32,64 +35,80 @@ PC-CVAE achieves R² of **0.892** and **0.946** in the far-range extrapolation d
 PC-CVAE/
 ├── src/
 │   └── models/
-│       ├── pc_cvae_solubility.py         # PC-CVAE for solubility system
-│       ├── pc_cvae_viscosity.py          # PC-CVAE for viscosity system
-│       └── low_dim_model.py              # LowDimEnsemble (binary subsystem models)
+│       ├── pc_cvae_solubility.py            # PC-CVAE for the solubility system
+│       ├── pc_cvae_viscosity.py             # PC-CVAE for the viscosity system
+│       ├── pc_cvae_thermal_conductivity.py  # PC-CVAE for the thermal-conductivity system
+│       ├── utils_solubility.py              # Physics evaluators / helpers (solubility)
+│       ├── utils_viscosity.py               # Physics evaluators / helpers (viscosity)
+│       └── low_dim_model.py                 # LowDimEnsemble (binary subsystem models)
 ├── experiments/
 │   ├── solubility/
-│   │   ├── ablation/
-│   │   │   └── pc_cvae_experiment.py     # K-fold ablation study (solubility)
-│   │   ├── small_sample/
-│   │   │   └── Small_Sample_Sensitivity_Experiment_-_PC-CVAE.py
-│   │   └── noise/
-│   │       └── Noise_Robustness_Experiment_-_PC-CVAE.py
-│   └── viscosity/
-│       ├── ablation/
-│       │   └── pc_cvae_experiment.py     # K-fold ablation study (viscosity)
-│       └── small_sample/
-│           └── Small_Sample_Sensitivity_Experiment_-_PC-CVAE__Viscosity_System_.py
+│   │   ├── pc_cvae_experiment.py            # K-fold ablation / main extrapolation study
+│   │   ├── small_sample_sensitivity_experiment.py
+│   │   └── noise_robustness_experiment.py
+│   ├── viscosity/
+│   │   ├── pc_cvae_experiment.py
+│   │   ├── small_sample_sensitivity_experiment.py
+│   │   └── noise_robustness_experiment.py
+│   └── Thermal_conductivity/
+│       ├── pc_cvae_experiment.py
+│       ├── pc_cvae_ablation_study.py
+│       ├── baseline_ablation_experiment.py
+│       ├── gpr_baseline.py
+│       └── ternary_boundary_correspondence_analysis.py
 ├── data/
 │   ├── solubility/
-│   │   ├── split_by_temperature/         # Train / near-range / far-range splits
-│   │   └── fixed_splits/                 # Fixed train / val splits
-│   └── viscosity/
-│       ├── split_by_temperature/
-│       └── fixed_splits/
+│   │   ├── raw/{binary,ternary}/            # Source experimental data
+│   │   ├── cleaned/                         # Cleaned dataset
+│   │   ├── split_by_temperature/            # Train / near-range / far-range splits
+│   │   └── fixed_splits/                    # Fixed train / val splits
+│   ├── viscosity/                           # (same layout)
+│   └── Thermal_conductivity/                # (same layout)
 ├── models/
 │   └── Low_dim_model/
-│       ├── solubility/                   # Pretrained binary solubility models
-│       │   ├── Na2SO4-H2O.pth
-│       │   └── MgSO4-H2O.pth
-│       └── viscosity/                    # Pretrained binary viscosity models
-│           ├── MCH_HMN.pth
-│           ├── MCH_cis_Decalin.pth
-│           └── cis_Decalin_HMN.pth
-├── results/                              # Output directory (generated at runtime)
-├── environment.yml
+│       ├── solubility/                      # Pretrained binary models (Na2SO4-H2O, MgSO4-H2O)
+│       ├── viscosity/                       # Pretrained binary models (MCH_HMN, MCH_cis_Decalin, cis_Decalin_HMN)
+│       └── Thermal_conductivity/            # Pretrained binary models (NaCl-H2O, CaCl2-H2O)
+├── results/                                 # Output directory (generated at runtime)
+├── requirements.txt                         # Minimal pip dependencies (recommended)
+├── environment.yml                          # Exact conda export (full lock)
 ├── README.md
 ├── LICENSE
 └── CITATION.cff
 ```
 
+> **Note.** The scripts under `experiments/Thermal_conductivity/` import a module
+> `utils_thermal_conductivity` (providing `ThermalConductivityPhysicsEvaluator`).
+> Place `utils_thermal_conductivity.py` in `src/models/` before running them; the
+> solubility and viscosity experiments run as-is.
+
 ---
 
 ## Installation
 
-**Step 1.** Clone the repository:
+Python 3.10 is recommended.
+
+**Option A — pip (recommended, portable):**
 
 ```bash
 git clone https://github.com/wang201111/PC-CVAE.git
 cd PC-CVAE
+python -m venv .venv && source .venv/bin/activate   # optional
+pip install -r requirements.txt
 ```
 
-**Step 2.** Create and activate the conda environment:
+**Option B — conda (exact environment used in this work):**
 
 ```bash
 conda env create -f environment.yml
-conda activate pc-cvae
+conda activate electrolyte-pytorch
 ```
 
-**Step 3.** Verify the installation:
+`environment.yml` is a full export of the environment used to produce the results
+and contains build-pinned dependencies (and may list mirror channels you can
+remove if they are not reachable). For most users `requirements.txt` is simpler.
+
+Verify the installation:
 
 ```bash
 python -c "import torch; print(torch.__version__)"
@@ -99,7 +118,7 @@ python -c "import torch; print(torch.__version__)"
 
 ## Quick Start
 
-### Training the Solubility Model
+### Solubility system
 
 ```python
 from src.models.pc_cvae_solubility import CVAEConfig, CVAEPhysicsModel, LowDimInfo
@@ -138,7 +157,7 @@ X_test = ...  # shape (M, 2): [T/°C, w(MgSO4)/%]
 y_pred = cvae.predict(X_test)  # shape (M,): predicted w(Na2SO4)/%
 ```
 
-### Training the Viscosity Model
+### Viscosity system
 
 ```python
 from src.models.pc_cvae_viscosity import CVAEConfig, CVAEPhysicsModel, LowDimInfo
@@ -178,73 +197,70 @@ X_test = ...  # shape (M, 4)
 y_pred = cvae.predict(X_test)  # shape (M, 1): predicted viscosity
 ```
 
+The thermal-conductivity model exposes the same interface as the viscosity model
+(`pc_cvae_thermal_conductivity`).
+
 ---
 
-## Reproducing Experiments
+## Reproducing the Experiments
 
-All experiment scripts are located under `experiments/`. Run from the project root:
-
-### K-Fold Ablation Study (Solubility)
-
-```bash
-python experiments/solubility/ablation/pc_cvae_experiment.py
-```
-
-### K-Fold Ablation Study (Viscosity)
+All experiment scripts read data and pretrained models via paths relative to the
+project root and are intended to be run from the project root:
 
 ```bash
-python experiments/viscosity/ablation/pc_cvae_experiment.py
+# Solubility
+python experiments/solubility/pc_cvae_experiment.py
+python experiments/solubility/small_sample_sensitivity_experiment.py
+python experiments/solubility/noise_robustness_experiment.py
+
+# Viscosity
+python experiments/viscosity/pc_cvae_experiment.py
+python experiments/viscosity/small_sample_sensitivity_experiment.py
+python experiments/viscosity/noise_robustness_experiment.py
+
+# Thermal conductivity (requires src/models/utils_thermal_conductivity.py)
+python experiments/Thermal_conductivity/pc_cvae_experiment.py
+python experiments/Thermal_conductivity/pc_cvae_ablation_study.py
+python experiments/Thermal_conductivity/baseline_ablation_experiment.py
+python experiments/Thermal_conductivity/gpr_baseline.py
+python experiments/Thermal_conductivity/ternary_boundary_correspondence_analysis.py
 ```
 
-### Small-Sample Sensitivity (Solubility)
-
-```bash
-python experiments/solubility/small_sample/Small_Sample_Sensitivity_Experiment_-_PC-CVAE.py
-```
-
-### Small-Sample Sensitivity (Viscosity)
-
-```bash
-python experiments/viscosity/small_sample/Small_Sample_Sensitivity_Experiment_-_PC-CVAE__Viscosity_System_.py
-```
-
-### Noise Robustness (Solubility)
-
-```bash
-python experiments/solubility/noise/Noise_Robustness_Experiment_-_PC-CVAE.py
-```
-
-Results are saved to `results/` with per-fold metrics, predictions, and training histories in Excel format.
+Outputs (per-fold metrics, predictions, training histories) are written to `results/`.
+The training seed is fixed at 42 for reproducibility.
 
 ---
 
 ## Data
 
-Experimental data are sourced from published literature. The data files are organized by system and split type:
+Experimental data are compiled from published literature and organized by system
+and split. Data sources are listed in the associated paper.
 
 | Path | Description |
 |---|---|
-| `data/solubility/split_by_temperature/` | Solubility data split by temperature (training set ≤ 50 °C; near-range 50–100 °C; far-range ≥ 100 °C) |
-| `data/solubility/fixed_splits/` | Fixed train/val split for noise robustness experiments |
-| `data/viscosity/split_by_temperature/` | Viscosity data split by temperature (training set 20–30 °C; near-range 30–60 °C; far-range 60–80 °C) |
-| `data/viscosity/fixed_splits/` | Fixed train/val split for small-sample experiments |
+| `data/<system>/raw/binary/` | Binary subsystem source data (for the boundary models) |
+| `data/<system>/raw/ternary/` | Ternary source data |
+| `data/<system>/cleaned/` | Cleaned dataset |
+| `data/<system>/split_by_temperature/` | Train / near-range / far-range splits by temperature |
+| `data/<system>/fixed_splits/` | Fixed train / val split |
 
-Data sources are listed in the paper (see Citation below).
+Temperature partitions: solubility (train ≤ 50 °C; near 50–100 °C; far ≥ 100 °C);
+viscosity (train 20–30 °C; near 30–60 °C; far 60–80 °C); thermal conductivity
+(train 20–100 °C; far 200–300 °C).
 
 ---
 
 ## Pretrained Binary Subsystem Models
 
-Pretrained LowDimEnsemble models for all binary subsystems are provided under `models/Low_dim_model/`. These are trained on the full experimental datasets of the respective binary systems and their parameters are frozen during PC-CVAE training.
-
-To retrain a binary subsystem model from scratch:
+Pretrained `LowDimEnsemble` models for every binary subsystem are provided under
+`models/Low_dim_model/`. They are trained on the full datasets of their respective
+binary systems and frozen during PC-CVAE training. To retrain one:
 
 ```python
 from src.models.low_dim_model import LowDimEnsemble, LowDimConfig
-import numpy as np
 
 X = ...  # shape (N, 1): temperature T/°C  (or [T, P] for viscosity binaries)
-y = ...  # shape (N, 1): solubility or viscosity
+y = ...  # shape (N, 1): solubility / viscosity / thermal conductivity
 
 config = LowDimConfig(N_ENSEMBLE=5, N_EPOCHS=1000)
 model = LowDimEnsemble(input_dim=1, config=config)
@@ -258,43 +274,45 @@ model.save('models/Low_dim_model/solubility/Na2SO4-H2O.pth')
 
 | Component | Version |
 |---|---|
-| Python | 3.9 |
-| PyTorch | 1.9.0 |
-| scikit-learn | 1.0.1 |
-| NumPy | ≥ 1.21 |
-| pandas | ≥ 1.3 |
-| openpyxl | ≥ 3.0 |
-| BayesianOptimization | 1.4.2 |
-| CUDA (optional) | ≥ 11.1 |
+| Python | 3.10 |
+| PyTorch | 2.3.1 |
+| scikit-learn | 1.7.0 |
+| NumPy | 2.2.6 |
+| pandas | 2.3.0 |
+| SciPy | 1.15.2 |
+| openpyxl | 3.1.5 |
+| plotly | 6.1.2 |
+| bayesian-optimization | 3.1.0 |
+| networkx | 3.4.2 |
 
-Hardware used in this work: NVIDIA RTX 4070 Super GPU, Intel i5-13600KF CPU (3.5 GHz), 32 GB RAM.
+Hardware used in this work: NVIDIA RTX 4070 Super GPU, Intel i5-13600KF CPU
+(3.5 GHz), 32 GB RAM. A GPU is optional; the models are small and train in under a
+minute on the above hardware.
+
+---
+
+## Data and Code Availability
+
+All datasets and complete model predictions are publicly available on GitHub
+(<https://github.com/wang201111/PC-CVAE>) and permanently archived on Zenodo
+(<https://doi.org/10.5281/zenodo.19716264>).
 
 ---
 
 ## Citation
 
-If you use this code in your research, please cite:
+If you use this code, please cite the software (see `CITATION.cff`) and the
+associated paper:
 
 ```bibtex
-@article{your_citation_key,
-  title   = {Physics-Constrained Conditional Variational Autoencoder for Wide-Range Extrapolation of Macroscopic Properties in Multicomponent Systems},
-  author  = {Your Name and Co-authors},
-  journal = {Journal Name},
-  year    = {2025},
-  doi     = {10.xxxx/xxxxxx}
-}
-```
-
-If you use the code directly, please also cite the software:
-
-```bibtex
-@software{wang201111_pccvae_2026,
-  author  = {Wang, Your Given Name},
-  title   = {PC-CVAE},
-  version = {1.0.0},
+@article{wang_pccvae_2026,
+  title   = {Reliable Extrapolation of Multicomponent Thermophysical Properties
+             to Extreme Operating Conditions via Physics-Constrained Generative Learning},
+  author  = {Wang, Yuan and Yuan, Shuaiying and Ming, Hongxin and Li, Song and
+             Zhang, Weidong and Li, Hui and Liu, Dahuan},
   year    = {2026},
-  doi     = {10.5281/zenodo.19716264},
-  url     = {https://doi.org/10.5281/zenodo.19716264}
+  note    = {Manuscript under review. Code and data archived at
+             \url{https://doi.org/10.5281/zenodo.19716264}}
 }
 ```
 

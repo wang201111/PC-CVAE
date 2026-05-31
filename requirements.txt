@@ -1,0 +1,15 @@
+# Core dependencies for PC-CVAE
+# Versions pinned to the environment used in this work (see environment.yml for the
+# full conda export). Python 3.10 is recommended.
+
+torch==2.3.1
+numpy==2.2.6
+pandas==2.3.0
+scikit-learn==1.7.0
+scipy==1.15.2
+openpyxl==3.1.5
+plotly==6.1.2
+joblib==1.5.1
+tqdm==4.67.1
+networkx==3.4.2
+bayesian-optimization==3.1.0

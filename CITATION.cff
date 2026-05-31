@@ -1,0 +1,70 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the software and the associated paper."
+type: software
+title: "PC-CVAE: A Physics-Constrained Conditional Variational Autoencoder for Wide-Range Extrapolation of Thermophysical Properties in Multicomponent Systems"
+version: "1.0.0"
+date-released: "2026-06-01"   # TODO: set to the actual release/archival date
+url: "https://github.com/wang201111/PC-CVAE"
+repository-code: "https://github.com/wang201111/PC-CVAE"
+license: MIT
+authors:
+  - family-names: "Wang"
+    given-names: "Yuan"
+    affiliation: "College of Chemical Engineering, Qinghai University"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"   # TODO
+  - family-names: "Yuan"
+    given-names: "Shuaiying"
+    affiliation: "Beijing University of Chemical Technology"
+  - family-names: "Ming"
+    given-names: "Hongxin"
+    affiliation: "College of Chemical Engineering, Qinghai University"
+  - family-names: "Li"
+    given-names: "Song"
+    affiliation: "College of Chemical Engineering, Qinghai University"
+  - family-names: "Zhang"
+    given-names: "Weidong"
+    affiliation: "College of Chemical Engineering, Qinghai University"
+    email: "weidzhang@qhu.edu.cn"
+  - family-names: "Li"
+    given-names: "Hui"
+    affiliation: "Beijing University of Chemical Technology"
+  - family-names: "Liu"
+    given-names: "Dahuan"
+    affiliation: "Beijing University of Chemical Technology; Qinghai University"
+    email: "liudh@mail.buct.edu.cn"
+
+preferred-citation:
+  type: article
+  title: "Reliable Extrapolation of Multicomponent Thermophysical Properties to Extreme Operating Conditions via Physics-Constrained Generative Learning"
+  authors:
+    - family-names: "Wang"
+      given-names: "Yuan"
+    - family-names: "Yuan"
+      given-names: "Shuaiying"
+    - family-names: "Ming"
+      given-names: "Hongxin"
+    - family-names: "Li"
+      given-names: "Song"
+    - family-names: "Zhang"
+      given-names: "Weidong"
+    - family-names: "Li"
+      given-names: "Hui"
+    - family-names: "Liu"
+      given-names: "Dahuan"
+  year: 2026
+  # journal / doi to be completed upon acceptance
+  journal: "TODO (manuscript under review)"
+  doi: "TODO"
+  # Dataset and code are permanently archived on Zenodo:
+  notes: "Archived on Zenodo, DOI: 10.5281/zenodo.19716264"
+
+keywords:
+  - physics-constrained machine learning
+  - conditional variational autoencoder
+  - thermodynamic manifold
+  - multicomponent systems
+  - wide-range extrapolation
+  - solubility prediction
+  - viscosity prediction
+  - thermal conductivity prediction
+  - Gibbs phase rule
