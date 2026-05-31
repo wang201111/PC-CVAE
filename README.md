@@ -3,7 +3,7 @@
 [![Python 3.10](https://img.shields.io/badge/Python-3.10-blue.svg)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.3.1-orange.svg)](https://pytorch.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![DOI](https://img.shields.io/badge/Zenodo-10.5281%2Fzenodo.19716264-blue.svg)](https://doi.org/10.5281/zenodo.19716264)
+[![DOI](https://img.shields.io/badge/Zenodo-10.5281%2Fzenodo.19716264-blue.svg)](https://doi.org/10.5281/zenodo.19716263)
 
 Official implementation of **PC-CVAE**, a physics-constrained generative framework for reliable wide-range extrapolation of macroscopic thermophysical properties in multicomponent systems from limited, easily accessible experimental data.
 
